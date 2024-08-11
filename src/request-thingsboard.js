@@ -4,8 +4,6 @@ const axios = require('axios');
 
 const thingsBoardKeys = require('../config/mapping-keys.json')
 
-
-
 class ThingsBoardIo {
     constructor(directory) {
         this.directory = directory || 'tmp-output';
@@ -59,21 +57,55 @@ class ThingsBoardIo {
             resolve(files);
         });
     }
-    async start() {
+    async removeFile(file) {
         return new Promise(async (resolve, reject) => {
-            const files = await this.readOutputDirectory();
-            for (const file of files) {
+            const filePath = path.join(__dirname, '..', this.directory, file);
+
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.log('Error removing file', err);
+                    reject();
+                    return;
+                }
+                resolve();
+            });
+        });
+    }
+    async start(listOfFiles = []) {
+        const filesSent = [];
+        const keys = [];
+        return new Promise(async (resolve, reject) => {
+
+            const listOfFiles = await this.readOutputDirectory(); // ALL FILES
+
+            for (const filePath of listOfFiles) {
+                const file = filePath.split('/').pop();
+                let fileNameArray = file.split('_').splice(2);
+                const found = thingsBoardKeys.find((element) => element.contains == fileNameArray.join('_'));
+                console.log(found);
+                if(!found){
+                    keys.push({
+                        //key: file.split('_')[0],
+                        "contains": fileNameArray.join('_')
+                    });
+                    continue;
+                }
+
                 for (const key of thingsBoardKeys) {
-                    if (file.includes(key.contains)) {
+                    if (key.hasOwnProperty('key') && file.includes(key.contains)) {
                         await this.sendJsonToThingsBoard(file, key.key).then(() => {
-                            console.log('File sent:', file);
+                            filesSent.push(file);
+                            this.removeFile(file);
                         }).catch((error) => {
                             console.log('Error sending file:', file, error);
                         });
                     }
                 }
             }
-            resolve();
+            if(keys.length > 0){
+                console.log('Keys not found:', keys);
+            }
+            resolve(filesSent);
         });
     }
 }

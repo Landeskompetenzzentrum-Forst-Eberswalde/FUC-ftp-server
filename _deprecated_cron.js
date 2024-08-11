@@ -46,7 +46,6 @@ async function getFtpConnection() {
 async function loopList(parentDirectory, directory) {
 	return new Promise(async (resolve, reject) => {
 
-
 		if (directory.type === 'd') {
 			ftp.list(directory.name, async function(err, list) {
 				if (err) {
@@ -86,26 +85,12 @@ async function readFile(parentDirectory, fileName){
 			stream.pipe(fs.createWriteStream('tmp-input/' + fileName));
 		});
 	});
-	/*return new Promise((resolve, reject) => {
-		ftp.get(fileName, function(err, stream) {
-			if (err) {
-				console.log("Error getting file", err);
-				return reject(err);
-			};
-			console.log("Got file", fileName);
-
-			stream.once('close', function() { ftp.end(); });
-			stream.pipe(fs.createWriteStream('documents/2024-06-27_07h59_Beerenbusch_Bestand.csv'));
-
-			//stream.once('close', function() { ftp.end(); });
-			//stream.pipe(fs.createWriteStream(`${__dirname}/${fileName}_local.csv`));
-			resolve();
-		});
-	});*/
 }
 
+
+
 const job = new CronJob(
-	'*/60 * * * * *', // cronTime
+	'*/10 * * * *', // cronTime: every 10 minutes // https://crontab.guru/every-10-minutes
 	getFtpConnection, // onTick
 	null, // onComplete
 	false, // start
@@ -113,5 +98,3 @@ const job = new CronJob(
 );
 
 getFtpConnection()
-
-//job.start();

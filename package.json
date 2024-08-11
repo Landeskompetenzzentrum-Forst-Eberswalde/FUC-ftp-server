@@ -2,14 +2,13 @@
   "name": "fuc-ftp-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --env-file .env cron.js ",
-    "send": "node --env-file .env send-to-thingsboard.js",
-    "send-dev": "node --env-file .env.development.local send-to-thingsboard.js",
-    "clean": "node --env-file .env clean.js",
-    "dev": "node --env-file .dev.local.env cron.js "
+
+    "start": "pm2 start ecosystem.config.js",
+    "start::once": "node --env-file .env app.js",
+
+    "stop::all": "pm2 stop all"
   },
   "keywords": [],
   "author": "",

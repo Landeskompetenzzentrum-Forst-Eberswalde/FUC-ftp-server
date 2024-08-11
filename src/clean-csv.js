@@ -4,8 +4,10 @@ const path = require('path');
 const csvtojsonV2=require("csvtojson");
 
 
-class CleanCsvToJson {
-    constructor(inputDirectory, outputDirectory) {
+exports.default = class CleanCsvToJson {
+    constructor(filesArray, inputDirectory, outputDirectory) {
+
+        this.filesArray = filesArray || [];
         this.inputDirectory = inputDirectory || 'tmp-input';
         this.outputDirectory = outputDirectory || 'tmp-output';
 
@@ -60,17 +62,29 @@ class CleanCsvToJson {
 
                 fs.writeFileSync(jsonFilePath, JSON.stringify(jsonObj, null, 4));
                 console.log('File converted:', jsonFilePath);
-                resolve();
+                resolve(jsonFilePath);
+            }).catch((err) => {
+                console.log('Error converting file', err);
+                reject();
             });
         });
     }
-    async start() {
+    async start(fileList) {
+        const convertedFiles = [];
         return new Promise(async (resolve, reject) => {
             const files = await this.getFilesFromLocalDirectory(this.inputDirectory);
-            for (let i = 0; i < files.length; i++) {
-                await this.convertCsvToJson(files[i]);
+
+            for (let i = 0; i < fileList.length; i++) {
+                try {
+                    const convertedFile = await this.convertCsvToJson(fileList[i].split('/').pop());
+                    convertedFiles.push(convertedFile);
+                } catch (err) {
+                    console.log('Error converting file', err);
+                    //reject();
+                    //return;
+                }
             }
-            resolve();
+            resolve(convertedFiles);
         });
     }
 
@@ -114,5 +128,3 @@ class CleanCsvToJson {
         });
     }
 }
-  
-exports.CleanCsvToJson = CleanCsvToJson;
