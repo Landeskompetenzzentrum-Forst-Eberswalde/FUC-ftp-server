@@ -19,6 +19,8 @@ exports.default = class SyncFiles {
             fs.mkdirSync(this.dir, { recursive: true });
         }
 
+        console.log("SyncFiles", this.ftpHost, this.ftpPort, this.ftpUsername, this.ftpPassword);
+
         this.downloadedFiles = [];
 
         //const client = new Client();
@@ -72,7 +74,7 @@ exports.default = class SyncFiles {
     
             if (directory.type === 'd') {
                 this.ftp.list(directory.name, async function(err, list) {
-                    if (err) {
+                    if (err || !list) {
                         console.log("Error listing files", err);
                         that.ftp.end();
                         reject();

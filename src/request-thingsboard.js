@@ -30,6 +30,7 @@ class ThingsBoardIo {
                 await this.postSensorDataToThingsboard(JSON.parse(data), key);
             } catch (error) {
                 console.log('Error sending data to ThingsBoard:', error);
+                reject(error);
             }
             resolve();
         });
@@ -82,7 +83,7 @@ class ThingsBoardIo {
                 const file = filePath.split('/').pop();
                 let fileNameArray = file.split('_').splice(2);
                 const found = thingsBoardKeys.find((element) => element.contains == fileNameArray.join('_'));
-                console.log(found);
+
                 if(!found){
                     keys.push({
                         //key: file.split('_')[0],
@@ -97,7 +98,7 @@ class ThingsBoardIo {
                             filesSent.push(file);
                             this.removeFile(file);
                         }).catch((error) => {
-                            console.log('Error sending file:', file, error);
+                            reject(error);
                         });
                     }
                 }

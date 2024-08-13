@@ -7,6 +7,9 @@ const cleanCsvToJson = new CleanCsvToJson();
 const thingsBoardIo = new ThingsBoardIo('tmp-output', true);
 
 async function main(){
+    await new Promise(resolve => setTimeout(resolve, 20000));
+
+    console.log('Starting main function');
     syncFiles.getFtpConnection().then((readFiles) => {
         console.log("List of files:", readFiles);
         cleanCsvToJson.start(readFiles).then((convertedFiles) => {
@@ -23,17 +26,22 @@ async function main(){
         console.log("Error getting FTP connection", err);
     });
 }
+async function _init(){
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
+    main();
+}
 
 // https://www.npmjs.com/package/cron
 var CronJob = require('cron').CronJob;
 
+
 const job = new CronJob(
-	'*/10 * * * *', // cronTime: every 10 minutes // https://crontab.guru/every-10-minutes
+	'0 5 * * *', // cronTime: every 10 minutes // https://crontab.guru/every-10-minutes // 0 5 * * *
 	main, // onTick
 	null, // onComplete
 	true, // start
 	'Europe/Berlin' // timeZone
 );
 
-main()
+_init()

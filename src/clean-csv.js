@@ -80,7 +80,7 @@ exports.default = class CleanCsvToJson {
                     convertedFiles.push(convertedFile);
                 } catch (err) {
                     console.log('Error converting file', err);
-                    //reject();
+                    reject(err);
                     //return;
                 }
             }
