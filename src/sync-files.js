@@ -19,7 +19,7 @@ exports.default = class SyncFiles {
             fs.mkdirSync(this.dir, { recursive: true });
         }
 
-        console.log("SyncFiles", this.ftpHost, this.ftpPort, this.ftpUsername, this.ftpPassword);
+        console.log("init SyncFiles", this.ftpHost, this.ftpPort, this.ftpUsername, this.ftpPassword);
 
         this.downloadedFiles = [];
 

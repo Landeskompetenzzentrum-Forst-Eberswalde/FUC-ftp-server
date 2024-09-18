@@ -39,11 +39,15 @@ class ThingsBoardIo {
         return new Promise(async (resolve, reject) => {
             const url = `${process.env.THINGSBOARD_PROTOCOL}://${process.env.THINGSBOARD_HOST}:${process.env.THINGSBOARD_PORT}/api/v1/${key}/telemetry`;
             
-            console.log(url);
-            
             axios.post(url, data)
             .then(function (response) {
-                console.log(response);
+                if (response.status != 200) {
+                    console.log('Error sending data to ThingsBoard:', url);
+                    reject();
+                    return;
+                }else{
+                    console.log('Data sent to ThingsBoard:', url);
+                }
                 resolve();
             })
             .catch(function (error) {

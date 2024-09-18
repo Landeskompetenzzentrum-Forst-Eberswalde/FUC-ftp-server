@@ -6,18 +6,23 @@ const syncFiles = new SyncFiles(process.env.FTP_HOST, process.env.FTP_PORT, proc
 const cleanCsvToJson = new CleanCsvToJson();
 const thingsBoardIo = new ThingsBoardIo('tmp-output', true);
 
-syncFiles.getFtpConnection().then((readFiles) => {
-    console.log("List of files:", readFiles);
-    cleanCsvToJson.start(readFiles).then((convertedFiles) => {
-        console.log("List of converted files:", convertedFiles);
-        thingsBoardIo.start(convertedFiles).then((uploadedFiles) => {
-            console.log('List of Files uploaded:', uploadedFiles);
+async function main(){
+    console.log('Starting main function');
+    syncFiles.getFtpConnection().then((readFiles) => {
+        console.log("List of files:", readFiles);
+        cleanCsvToJson.start(readFiles).then((convertedFiles) => {
+            console.log("List of converted files:", convertedFiles);
+            thingsBoardIo.start(convertedFiles).then((uploadedFiles) => {
+                console.log('List of Files uploaded:', uploadedFiles);
+            }).catch((error) => {
+                console.log('Error sending data to ThingsBoard:', error);
+            });
         }).catch((error) => {
-            console.log('Error sending data to ThingsBoard:', error);
+            console.log('Error converting data:', error);
         });
-    }).catch((error) => {
-        console.log('Error converting data:', error);
+    }).catch((err) => {
+        console.log("Error getting FTP connection", err);
     });
-}).catch((err) => {
-    console.log("Error getting FTP connection", err);
-});
+}
+main();
+console.log('Run app.js');
