@@ -29,7 +29,7 @@ async function main(){
 // https://www.npmjs.com/package/cron
 var CronJob = require('cron').CronJob;
 const job = new CronJob(
-	'*/10 * * * *', // cronTime: every 10 minutes // https://crontab.guru/every-10-minutes // 0 5 * * *
+	'*/60 * * * *', // cronTime: every 10 minutes // https://crontab.guru/every-10-minutes // 0 5 * * *
 	main, // onTick
 	null, // onComplete
 	true, // start
