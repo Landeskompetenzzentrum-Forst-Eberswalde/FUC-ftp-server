@@ -102,7 +102,7 @@ exports.default = class SyncFiles {
         return new Promise((resolve, reject) => {
 
             if (fs.existsSync(this.dir + '/' + fileName)) {
-                console.log("File already exists", this.dir + '/' + fileName);
+                //console.log("File already exists", this.dir + '/' + fileName);
                 resolve(null);
                 return;
             }

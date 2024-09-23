@@ -13,7 +13,8 @@ async function main(){
         cleanCsvToJson.start(readFiles).then((convertedFiles) => {
             console.log("List of converted files:", convertedFiles);
             thingsBoardIo.start(convertedFiles).then((uploadedFiles) => {
-                console.log('List of Files uploaded:', uploadedFiles);
+                // Output list of uploaded files to ThingsBoard and Date and Time
+                console.log("List of uploaded files:", uploadedFiles, new Date());
             }).catch((error) => {
                 console.log('Error sending data to ThingsBoard:', error);
             });

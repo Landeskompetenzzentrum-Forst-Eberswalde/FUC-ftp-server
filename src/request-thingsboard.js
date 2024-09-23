@@ -65,15 +65,17 @@ class ThingsBoardIo {
     async removeFile(file) {
         return new Promise(async (resolve, reject) => {
             const filePath = path.join(__dirname, '..', this.directory, file);
-
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.log('Error removing file', err);
+            try {
+                if (!fs.existsSync(filePath)) {
+                    console.log('File does not exist', filePath);
                     reject();
                     return;
                 }
-                resolve();
-            });
+            } catch (error) {
+                console.log('Error checking file', error);
+                reject();
+                return;
+            }
         });
     }
     async start(listOfFiles = []) {
@@ -100,16 +102,21 @@ class ThingsBoardIo {
                     if (key.hasOwnProperty('key') && file.includes(key.contains)) {
                         await this.sendJsonToThingsBoard(file, key.key).then(() => {
                             filesSent.push(file);
-                            this.removeFile(file);
+                            return this.removeFile(file);
+                        }).then(() => {
+                            console.log('File removed:', file);
                         }).catch((error) => {
-                            reject(error);
+                            console.log('Error sending data to ThingsBoard:', error);
                         });
+                        break;
                     }
                 }
+                // 1 Seconde Delay between requests
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
-            if(keys.length > 0){
+            /*if(keys.length > 0){
                 console.log('Keys not found:', keys);
-            }
+            }*/
             resolve(filesSent);
         });
     }
