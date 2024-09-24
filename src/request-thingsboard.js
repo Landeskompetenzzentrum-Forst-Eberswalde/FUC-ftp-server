@@ -114,7 +114,7 @@ class ThingsBoardIo {
                     }
                 }
                 // 1 Seconde Delay between requests
-                //await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(_resolve => setTimeout(_resolve, 1000));
             }
             /*if(keys.length > 0){
                 console.log('Keys not found:', keys);
