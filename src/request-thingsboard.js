@@ -27,7 +27,7 @@ class ThingsBoardIo {
             const jsonFilePath=path.join(__dirname, '..', this.directory, file);
             const data = fs.readFileSync(jsonFilePath);
             try {
-                await this.postSensorDataToThingsboard(JSON.parse(data), key);
+                await this.postSensorDataToThingsboard(JSON.parse(data), key, file);
             } catch (error) {
                 console.log('Error sending data to ThingsBoard:', error);
                 reject(error);
@@ -35,16 +35,15 @@ class ThingsBoardIo {
             resolve();
         });
     }
-    async postSensorDataToThingsboard(data, key) {
+    async postSensorDataToThingsboard(data, key, file) {
         return new Promise(async (resolve, reject) => {
             const url = `${process.env.THINGSBOARD_PROTOCOL}://${process.env.THINGSBOARD_HOST}:${process.env.THINGSBOARD_PORT}/api/v1/${key}/telemetry`;
             
             axios.post(url, data)
             .then(function (response) {
                 if (response.status != 200) {
-                    console.log('Error sending data to ThingsBoard:', url);
+                    console.log('Error sending data to ThingsBoard:', file);
                     reject();
-                    return;
                 }else{
                     console.log('Data sent to ThingsBoard:', url);
                 }
@@ -68,13 +67,13 @@ class ThingsBoardIo {
             try {
                 if (!fs.existsSync(filePath)) {
                     console.log('File does not exist', filePath);
-                    reject();
-                    return;
+                }else{
+                    fs.unlinkSync(filePath);
+                    resolve();
                 }
             } catch (error) {
                 console.log('Error checking file', error);
-                reject();
-                return;
+                reject(error);
             }
         });
     }
@@ -84,6 +83,8 @@ class ThingsBoardIo {
         return new Promise(async (resolve, reject) => {
 
             const listOfFiles = await this.readOutputDirectory(); // ALL FILES
+
+            console.log('Sending data to ThingsBoard:', listOfFiles);
 
             for (const filePath of listOfFiles) {
                 const file = filePath.split('/').pop();
@@ -95,6 +96,7 @@ class ThingsBoardIo {
                         //key: file.split('_')[0],
                         "contains": fileNameArray.join('_')
                     });
+                    console.log('Key not found:', fileNameArray.join('_'));
                     continue;
                 }
 
@@ -112,7 +114,7 @@ class ThingsBoardIo {
                     }
                 }
                 // 1 Seconde Delay between requests
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                //await new Promise(resolve => setTimeout(resolve, 1000));
             }
             /*if(keys.length > 0){
                 console.log('Keys not found:', keys);
