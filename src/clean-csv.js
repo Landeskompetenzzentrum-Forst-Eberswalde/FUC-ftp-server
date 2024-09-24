@@ -46,7 +46,7 @@ exports.default = class CleanCsvToJson {
         return new Promise(async (resolve, reject) => {
             const csvFilePath=path.join(__dirname, '..', this.inputDirectory, file);
             const jsonFilePath=path.join(__dirname, '..', this.outputDirectory, file.replace('.csv', '.json'));
-            console.log('Converting file:', process.env.CSV_DELIMITER);
+            //console.log('Converting file:', process.env.CSV_DELIMITER);
             csvtojsonV2({
                 delimiter: process.env.CSV_DELIMITER || ','
             })
@@ -61,7 +61,7 @@ exports.default = class CleanCsvToJson {
                 jsonObj = this.toThingsboardArray(jsonObj);
 
                 fs.writeFileSync(jsonFilePath, JSON.stringify(jsonObj, null, 4));
-                console.log('File converted:', jsonFilePath);
+                //console.log('File converted:', jsonFilePath);
                 resolve(jsonFilePath);
             }).catch((err) => {
                 console.log('Error converting file', err);

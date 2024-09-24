@@ -36,20 +36,23 @@ exports.default = class SyncFiles {
 
     async getFtpConnection() {
         const that = this;
+        this.downloadedFiles = [];
+        let connected = false;
         return new Promise((resolve, reject) => {
-
             this.ftp.on('ready', function() {
-                console.log("Connected to FTP server:", that.ftpHost, that.ftpPort, that.ftpUsername);
+                if (connected) return;
+                connected = true;
+                
+                console.log("Connected to FTP server:", that.ftpHost, that.ftpPort, that.ftpUsername, new Date());
                 that.ftp.list('/', async function(err, list) {
                     if (err) {
-                        console.log("Error listing files", err);
-                        that.ftp.end();
-                        reject(err);
-                        return;
-                    };
-                    for (var i = 0; i < list.length; i++) {
-                        await that.loopList('/', list[i]);
+                        console.log("getFtpConnection: Error listing files", err);
+                    }else{
+                        for (var i = 0; i < list.length; i++) {
+                            await that.loopList('/', list[i]);
+                        }
                     }
+                    
                     that.ftp.end();
                     resolve(that.downloadedFiles);
                 });
@@ -75,13 +78,13 @@ exports.default = class SyncFiles {
             if (directory.type === 'd') {
                 this.ftp.list(directory.name, async function(err, list) {
                     if (err || !list) {
-                        console.log("Error listing files", err);
-                        that.ftp.end();
+                        console.log("loopList: Error listing files", err);
+                        //that.ftp.end();
                         reject();
-                        return;
-                    };
-                    for (var i = 0; i < list.length; i++) {
-                        await that.loopList(parentDirectory + directory.name, list[i]);
+                    }else{
+                        for (var i = 0; i < list.length; i++) {
+                            await that.loopList(parentDirectory + directory.name, list[i]);
+                        }
                     }
                     resolve();
                 });

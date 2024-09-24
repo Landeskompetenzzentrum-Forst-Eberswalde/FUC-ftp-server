@@ -7,22 +7,21 @@ const cleanCsvToJson = new CleanCsvToJson();
 const thingsBoardIo = new ThingsBoardIo('tmp-output', true);
 
 async function main(){
-    console.log('Starting main function');
+    console.log('Starting main function: app-cron.js');
     syncFiles.getFtpConnection().then((readFiles) => {
         console.log("List of files:", readFiles);
-        cleanCsvToJson.start(readFiles).then((convertedFiles) => {
-            console.log("List of converted files:", convertedFiles);
-            thingsBoardIo.start(convertedFiles).then((uploadedFiles) => {
-                // Output list of uploaded files to ThingsBoard and Date and Time
-                console.log("List of uploaded files:", uploadedFiles, new Date());
-            }).catch((error) => {
-                console.log('Error sending data to ThingsBoard:', error);
-            });
-        }).catch((error) => {
-            console.log('Error converting data:', error);
-        });
+        return cleanCsvToJson.start(readFiles);
+    }).then((convertedFiles) => {
+        console.log("List of converted files:", convertedFiles);
     }).catch((err) => {
         console.log("Error getting FTP connection", err);
+    }).finally(() => {
+        thingsBoardIo.start().then((uploadedFiles) => {
+            // Output list of uploaded files to ThingsBoard and Date and Time
+            console.log("List of uploaded files:", uploadedFiles, new Date());
+        }).catch((error) => {
+            console.log('Error sending data to ThingsBoard:', error);
+        });
     });
 }
 

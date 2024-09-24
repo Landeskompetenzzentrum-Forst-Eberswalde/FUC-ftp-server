@@ -7,7 +7,7 @@ const cleanCsvToJson = new CleanCsvToJson();
 const thingsBoardIo = new ThingsBoardIo('tmp-output', true);
 
 async function main(){
-    console.log('Starting main function');
+    console.log('Starting main function: app.js');
     syncFiles.getFtpConnection().then((readFiles) => {
         console.log("List of files:", readFiles);
         cleanCsvToJson.start(readFiles).then((convertedFiles) => {
