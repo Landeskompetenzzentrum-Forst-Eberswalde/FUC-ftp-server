@@ -42,5 +42,7 @@ async function _init(){
     main();
 }
 
+
 job.start();
+_init();
 console.log('Run app-cron.js');
