@@ -2,6 +2,8 @@ const SyncFiles = require('./src/sync-files.js').default;
 const CleanCsvToJson = require('./src/clean-csv.js').default;
 const { ThingsBoardIo } = require("./src/request-thingsboard.js");
 
+console.log(process.env.FTP_PORT)
+
 const syncFiles = new SyncFiles(process.env.FTP_HOST, process.env.FTP_PORT, process.env.FTP_USERNAME, process.env.FTP_PASSWORD);
 const cleanCsvToJson = new CleanCsvToJson();
 const thingsBoardIo = new ThingsBoardIo('tmp-output', true);

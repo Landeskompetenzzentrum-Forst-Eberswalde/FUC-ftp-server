@@ -37,7 +37,8 @@ class ThingsBoardIo {
     }
     async postSensorDataToThingsboard(data, key, file) {
         return new Promise(async (resolve, reject) => {
-            const url = `${process.env.THINGSBOARD_PROTOCOL}://${process.env.THINGSBOARD_HOST}:${process.env.THINGSBOARD_PORT}/api/v1/${key}/telemetry`;
+            //const url = `${process.env.THINGSBOARD_PROTOCOL}://${process.env.THINGSBOARD_HOST}:${process.env.THINGSBOARD_PORT}/api/v1/${key}/telemetry`;
+            const url = `${process.env.THINGSBOARD_PROTOCOL}://${process.env.THINGSBOARD_HOST}/api/v1/${key}/telemetry`;
             
             axios.post(url, data)
             .then(function (response) {
@@ -125,6 +126,3 @@ class ThingsBoardIo {
 }
   
 exports.ThingsBoardIo = ThingsBoardIo;
-
-
-//curl -v -X POST http://localhost:8080/api/v1/WCNNbOSldc99DpPUaEcg/telemetry --header Content-Type:application/json --data "{temperature:25}"
